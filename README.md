@@ -42,4 +42,7 @@ Pastikan kamu sudah menginstal Python, lalu jalankan perintah berikut:
     - app.py: Logika backend dan API proxy.
     - static/: Berisi file CSS, JS, dan gambar.
     - templates/: Berisi file HTML (jika menggunakan Jinja2).
-   
+
+
+**kamu dapat melihat tampilan web StudentPreneur di url berikut**
+https://alpadgg.github.io/StudentPreneur-SMKBA/
