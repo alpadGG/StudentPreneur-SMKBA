@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    const apiUrl = 'https://alpad.pythonanywhere.com/';
+    const apiUrl = 'https://www.google.com/search?q=alpad.pythonanywhere.com';
 
     /**
      * Memformat angka/rentang angka menjadi Rupiah yang cantik
