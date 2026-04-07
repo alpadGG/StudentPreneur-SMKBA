@@ -25,32 +25,52 @@ $(document).ready(function() {
             let productHTML = '';
 
             products.forEach((item) => {
-                const pesanWA = `Halo admin, saya tertarik dengan produk "${item.nama}". Apakah masih tersedia?`;
-                const linkWA = `https://wa.me/${item.wa}?text=${encodeURIComponent(pesanWA)}`;
+            const pesanWA = `Halo admin, saya tertarik dengan produk "${item.nama}". Apakah masih tersedia?`;
+            const linkWA = `https://wa.me/${item.wa}?text=${encodeURIComponent(pesanWA)}`;
 
-                productHTML += `
-                    <div class="col-md-4 col-lg-3 mb-4 product-item" data-category="${item.kategori}">
-                        <div class="product-card shadow-sm h-100 border-0 product-card-trigger" 
-                             style="cursor: pointer; transition: transform 0.2s;"
-                             data-nama="${item.nama}"
-                             data-harga="${item.harga_raw}"
-                             data-foto="${item.foto}"
-                             data-wa="${linkWA}"
-                             data-kategori="${item.kategori}"
-                             data-desc="${item.deskripsi}">
-                            <div class="product-img-wrapper" style="height: 200px; overflow: hidden; border-radius: 8px 8px 0 0;">
-                                <img src="${item.foto}" class="w-100 h-100" style="object-fit: cover;" alt="${item.nama}">
-                            </div>
-                            <div class="p-3 text-center">
-                                <span class="badge bg-light text-secondary mb-2 border">${item.kategori}</span>
-                                <h6 class="fw-bold mb-1 text-truncate">${item.nama}</h6>
-                                <p class="text-primary fw-bold mb-3 small">${formatIDR(item.harga_raw)}</p>
-                                <button class="btn btn-primary btn-sm w-100 rounded-pill">Lihat Detail</button>
-                            </div>
+            productHTML += `
+                <div class="col-md-4 col-lg-3 mb-4 product-item" data-category="${item.kategori}">
+                    <div class="product-card shadow-sm h-100 border-0 product-card-trigger" 
+                        style="cursor: pointer; transition: transform 0.2s;"
+                        data-nama="${item.nama}"
+                        data-harga="${item.harga_raw}"
+                        data-foto="${item.foto}"
+                        data-wa="${linkWA}"
+                        data-kategori="${item.kategori}"
+                        data-desc="${item.deskripsi}"
+                        data-penjual="${item.penjual}"> <div class="product-img-wrapper" style="height: 200px; overflow: hidden; border-radius: 8px 8px 0 0;">
+                            <img src="${item.foto}" class="w-100 h-100" style="object-fit: cover;" alt="${item.nama}">
+                        </div>
+                        <div class="p-3 text-center">
+                            <span class="badge bg-light text-secondary mb-2 border">${item.kategori}</span>
+                            <h6 class="fw-bold mb-1 text-truncate">${item.nama}</h6>
+                            <p class="text-primary fw-bold mb-3 small">${formatIDR(item.harga_raw)}</p>
+                            <button class="btn btn-primary btn-sm w-100 rounded-pill">Lihat Detail</button>
                         </div>
                     </div>
-                `;
-            });
+                </div>
+            `;
+        });
+
+        // --- LOGIKA MODAL (DIPERBARUI) ---
+        $(document).on('click', '.product-card-trigger', function() {
+            const d = $(this).data();
+
+            $('#modal-title').text(d.nama);
+            $('#modal-price').text(formatIDR(d.harga.toString()));
+            $('#modal-img').attr('src', d.foto);
+            $('#modal-category').text(d.kategori);
+            $('#modal-wa-btn').attr('href', d.wa);
+            
+            // Tampilkan Nama Penjual/Siswa
+            $('#modal-seller').html(`<i class="bi bi-person-fill me-1"></i> Penjual: <strong>${d.penjual}</strong>`);
+
+            const finalDesc = d.desc ? d.desc : `Dapatkan produk ${d.nama} berkualitas tinggi hanya di StudentPreneur SMKBA.`;
+            $('#modal-desc').text(finalDesc);
+
+            const myModal = new bootstrap.Modal(document.getElementById('productModal'));
+            myModal.show();
+        });
 
             $('.loading-spinner').remove();
             $('#product-container').hide().html(productHTML).fadeIn();
