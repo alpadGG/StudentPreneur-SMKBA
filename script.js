@@ -98,30 +98,25 @@ $(document).ready(function() {
                 const linkWA = `https://wa.me/${item.wa}?text=${encodeURIComponent(pesanWA)}`;
             
                 productHTML += `
-                    <div class="col-md-4 col-lg-3 mb-4 product-item" data-category="${item.kategori}">
-                        <div class="product-card shadow-sm h-100 border-0 product-card-trigger" 
-                            style="cursor: pointer; transition: transform 0.2s;"
-                            data-nama="${item.nama}"
-                            data-harga="${item.harga_raw}"
-                            data-foto-cover="${coverFoto}"
-                            data-foto-all="${allFotos}" 
-                            data-wa="${linkWA}"
-                            data-kategori="${item.kategori}"
-                            data-desc="${item.deskripsi}"
-                            data-penjual="${item.penjual}"> 
-                            <div class="product-img-wrapper" style="height: 200px; overflow: hidden; border-radius: 8px 8px 0 0;">
+                    <div class="col-6 col-md-4 col-lg-3 mb-4 product-item" data-category="${item.kategori}">
+                        <div class="product-card shadow-sm h-100 border-0 product-card-trigger d-flex flex-column" 
+                            style="cursor: pointer; border-radius: 15px; overflow: hidden; background: #fff;">
+                            
+                            <div class="product-img-wrapper" style="aspect-ratio: 1 / 1; width: 100%; overflow: hidden;">
                                 <img src="${coverFoto}" class="w-100 h-100" style="object-fit: cover;" alt="${item.nama}">
                             </div>
-                            <div class="p-3 text-center">
-                                <span class="badge bg-light text-secondary mb-2 border">${item.kategori}</span>
-                                <h6 class="fw-bold mb-1 text-truncate">${item.nama}</h6>
-                                <p class="text-primary fw-bold mb-3 small">${formatIDR(item.harga_raw)}</p>
-                                <button class="btn btn-primary btn-sm w-100 rounded-pill">Lihat Detail</button>
+                
+                            <div class="p-3 d-flex flex-column flex-grow-1 text-center">
+                                <span class="badge bg-light text-primary mb-2 border align-self-center" style="font-size: 10px;">
+                                    ${item.kategori}
+                                </span>
+                                <h6 class="fw-bold mb-1 text-truncate" style="font-size: 14px;">${item.nama}</h6>
+                                <p class="text-primary fw-bold mb-3 small mt-auto">${formatIDR(item.harga_raw)}</p>
+                                <button class="btn btn-primary btn-sm w-100 rounded-pill" style="font-size: 12px;">Detail</button>
                             </div>
                         </div>
                     </div>
                 `;
-            });
 // ...
 
 
