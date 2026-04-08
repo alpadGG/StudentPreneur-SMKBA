@@ -42,35 +42,42 @@ $(document).ready(function() {
             let productHTML = '';
 
             // Looping data produk untuk membuat elemen kartu (Card)
-            products.forEach((item) => {
-                // Setup integrasi WhatsApp dengan pesan otomatis
+           products.forEach((item) => {
+               // Ambil gambar pertama untuk cover
+               const coverFoto = (item.foto_list && item.foto_list.length > 0) 
+                   ? item.foto_list[0] 
+                   : 'https://via.placeholder.com/400x300?text=No+Image';
+               const allFotos = item.foto_list ? item.foto_list.join('|') : coverFoto;
+
                 const pesanWA = `Halo admin, saya tertarik dengan produk "${item.nama}". Apakah masih tersedia?`;
                 const linkWA = `https://wa.me/${item.wa}?text=${encodeURIComponent(pesanWA)}`;
-
-                // Template String untuk Kartu Produk
+            
                 productHTML += `
-                    <div class="col-md-4 col-lg-3 mb-4 product-item" data-category="${item.kategori}">
-                        <div class="product-card shadow-sm h-100 border-0 product-card-trigger" 
-                            style="cursor: pointer; transition: transform 0.2s;"
+                    <div class="col-6 col-md-4 col-lg-3 mb-4 product-item" data-category="${item.kategori}">
+                        <div class="product-card shadow-sm h-100 border-0 product-card-trigger d-flex flex-column" 
+                            style="cursor: pointer; border-radius: 15px; overflow: hidden; background: #fff;"
                             data-nama="${item.nama}"
                             data-harga="${item.harga_raw}"
-                            data-foto="${item.foto}"
+                            data-foto-all="${allFotos}" 
                             data-wa="${linkWA}"
                             data-kategori="${item.kategori}"
                             data-desc="${item.deskripsi}"
-                            data-penjual="${item.penjual}"> 
-                            <div class="product-img-wrapper" style="height: 200px; overflow: hidden; border-radius: 8px 8px 0 0;">
-                                <img src="${item.foto}" class="w-100 h-100" style="object-fit: cover;" alt="${item.nama}">
+                            data-penjual="${item.penjual}">
+                            
+                            <div class="product-img-wrapper" style="aspect-ratio: 1 / 1; width: 100%; overflow: hidden;">
+                                <img src="${coverFoto}" class="w-100 h-100" style="object-fit: cover;" alt="${item.nama}">
                             </div>
-                            <div class="p-3 text-center">
-                                <span class="badge bg-light text-secondary mb-2 border">${item.kategori}</span>
-                                <h6 class="fw-bold mb-1 text-truncate">${item.nama}</h6>
-                                <p class="text-primary fw-bold mb-3 small">${formatIDR(item.harga_raw)}</p>
-                                <button class="btn btn-primary btn-sm w-100 rounded-pill">Lihat Detail</button>
+                
+                            <div class="p-3 d-flex flex-column flex-grow-1 text-center">
+                                <span class="badge bg-light text-primary mb-2 border align-self-center" style="font-size: 10px;">
+                                    ${item.kategori}
+                                </span>
+                                <h6 class="fw-bold mb-1 text-truncate" style="font-size: 14px;">${item.nama}</h6>
+                                <p class="text-primary fw-bold mb-3 small mt-auto">${formatIDR(item.harga_raw)}</p>
+                                <button class="btn btn-primary btn-sm w-100 rounded-pill" style="font-size: 12px;">Lihat Detail</button>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
 
             // Update DOM: Hapus spinner loading dan tampilkan produk dengan efek Fade In
@@ -91,65 +98,50 @@ $(document).ready(function() {
      */
     $(document).on('click', '.product-card-trigger', function() {
         const d = $(this).data();
-        const fotoArray = d.fotoAll.split('|');
+        
+        // Ambil semua foto dari atribut data-foto-all
+        const fotoArray = d.fotoAll ? d.fotoAll.split('|') : [];
     
-        // 1. Data Dasar Modal
+        // Mapping data teks
         $('#modal-title').text(d.nama);
-        $('#modal-price').text(formatIDR(d.harga));
+        $('#modal-price').text(formatIDR(d.harga.toString()));
         $('#modal-category').text(d.kategori);
         $('#modal-wa-btn').attr('href', d.wa);
         $('#modal-seller').html(`<i class="bi bi-person-fill me-1"></i> Penjual: <strong>${d.penjual}</strong>`);
-        $('#modal-desc').text(d.desc || `Produk unggulan dari ${d.penjual} SMKBA.`);
+        $('#modal-desc').text(d.desc || `Produk berkualitas dari StudentPreneur SMKBA.`);
     
-        // 2. Logika Carousel Dinamis
-        let carouselIndicators = '';
-        let carouselItems = '';
+        // --- LOGIKA CAROUSEL DINAMIS ---
+        let indicatorsHTML = '';
+        let itemsHTML = '';
     
         fotoArray.forEach((url, index) => {
-            // Slide pertama harus punya class 'active'
             const activeClass = index === 0 ? 'active' : '';
-            
-            // Buat Indicator (titik-titik di bawah)
-            carouselIndicators += `
-                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="${index}" 
-                    class="${activeClass}" aria-current="${index === 0}" aria-label="Slide ${index + 1}"></button>`;
-    
-            // Buat Item Gambar
-            carouselItems += `
+            indicatorsHTML += `
+                <button type="button" data-bs-target="#productCarousel" data-bs-slide-to="${index}" class="${activeClass}"></button>`;
+            itemsHTML += `
                 <div class="carousel-item ${activeClass}">
-                    <div style="aspect-ratio: 4/3; background: #f8f9fa; border-radius: 10px; overflow: hidden;">
-                        <img src="${url}" class="d-block w-100 h-100" style="object-fit: cover;" alt="Foto ${index + 1}">
-                    </div>
+                    <img src="${url}" class="d-block w-100" style="aspect-ratio: 4/3; object-fit: cover; border-radius: 10px;">
                 </div>`;
         });
     
-        // Susun Struktur Full Carousel
-        const fullCarouselHTML = `
+        const fullCarousel = `
             <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-                <div class="carousel-indicators">
-                    ${carouselIndicators}
-                </div>
-                <div class="carousel-inner shadow-sm" style="border-radius: 10px;">
-                    ${carouselItems}
-                </div>
+                <div class="carousel-indicators">${indicatorsHTML}</div>
+                <div class="carousel-inner">${itemsHTML}</div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
+                    <span class="carousel-control-prev-icon"></span>
                 </button>
                 <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
+                    <span class="carousel-control-next-icon"></span>
                 </button>
             </div>`;
     
-        // Masukkan ke tempat gambar utama modal
-        // Pastikan di index.html, area gambar modal loe punya id="modal-media-container"
-        $('#modal-media-container').html(fullCarouselHTML);
+        // Masukkan carousel ke dalam modal body (pastikan id ini ada di HTML)
+        $('#modal-media-container').html(fullCarousel);
     
         const myModal = new bootstrap.Modal(document.getElementById('productModal'));
         myModal.show();
     });
-
     /**
      * @event FilterCategory
      * @description Menyaring tampilan produk berdasarkan kategori yang dipilih user.
