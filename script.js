@@ -42,35 +42,27 @@ $(document).ready(function() {
             let productHTML = '';
 
             // Looping data produk untuk membuat elemen kartu (Card)
+            // Di dalam loadProducts()
             products.forEach((item) => {
-                // Setup integrasi WhatsApp dengan pesan otomatis
-                const pesanWA = `Halo admin, saya tertarik dengan produk "${item.nama}". Apakah masih tersedia?`;
-                const linkWA = `https://wa.me/${item.wa}?text=${encodeURIComponent(pesanWA)}`;
-
-                // Template String untuk Kartu Produk
+                // Ambil gambar pertama sebagai cover, jika tidak ada pakai placeholder
+                const coverFoto = item.foto_list && item.foto_list.length > 0 ? item.foto_list[0] : 'https://via.placeholder.com/400x300';
+                
+                // Simpan semua foto sebagai string yang dipisahkan koma di atribut data agar mudah diambil modal
+                const allFotos = item.foto_list.join(',');
+            
                 productHTML += `
                     <div class="col-md-4 col-lg-3 mb-4 product-item" data-category="${item.kategori}">
                         <div class="product-card shadow-sm h-100 border-0 product-card-trigger" 
-                            style="cursor: pointer; transition: transform 0.2s;"
                             data-nama="${item.nama}"
-                            data-harga="${item.harga_raw}"
-                            data-foto="${item.foto}"
-                            data-wa="${linkWA}"
-                            data-kategori="${item.kategori}"
-                            data-desc="${item.deskripsi}"
-                            data-penjual="${item.penjual}"> 
-                            <div class="product-img-wrapper" style="height: 200px; overflow: hidden; border-radius: 8px 8px 0 0;">
-                                <img src="${item.foto}" class="w-100 h-100" style="object-fit: cover;" alt="${item.nama}">
+                            data-foto-all="${allFotos}" 
+                            data-foto-cover="${coverFoto}"
+                            ... (data lainnya) ...>
+                            <div class="product-img-wrapper" style="height: 200px; overflow: hidden;">
+                                <img src="${coverFoto}" class="w-100 h-100" style="object-fit: cover;">
                             </div>
-                            <div class="p-3 text-center">
-                                <span class="badge bg-light text-secondary mb-2 border">${item.kategori}</span>
-                                <h6 class="fw-bold mb-1 text-truncate">${item.nama}</h6>
-                                <p class="text-primary fw-bold mb-3 small">${formatIDR(item.harga_raw)}</p>
-                                <button class="btn btn-primary btn-sm w-100 rounded-pill">Lihat Detail</button>
-                            </div>
+                            ...
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
 
             // Update DOM: Hapus spinner loading dan tampilkan produk dengan efek Fade In
