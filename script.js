@@ -81,27 +81,25 @@ $(document).ready(function() {
      * @description Menangkap klik pada kartu produk untuk memindahkan data atribut 
      * ke dalam elemen-elemen di dalam Modal Detail.
      */
-    $(document).on('click', '.product-card-trigger', function() {
-        const d = $(this).data();
+$(document).on('click', '.product-card-trigger', function() {
+    const d = $(this).data();
+    const listFoto = d.fotoAll.split(','); // Pecah kembali string menjadi array
 
-        // Mapping data ke elemen Modal
-        $('#modal-title').text(d.nama);
-        $('#modal-price').text(formatIDR(d.harga.toString()));
-        $('#modal-img').attr('src', d.foto);
-        $('#modal-category').text(d.kategori);
-        $('#modal-wa-btn').attr('href', d.wa);
-        
-        // Menampilkan informasi Penjual (Nama & Jurusan Siswa)
-        $('#modal-seller').html(`<i class="bi bi-person-fill me-1"></i> Penjual: <strong>${d.penjual}</strong>`);
+    // Update Modal
+    $('#modal-title').text(d.nama);
+    $('#modal-img').attr('src', d.fotoCover); // Gambar utama
 
-        // Logika deskripsi: Gunakan data Sheets atau fallback ke template default
-        const finalDesc = d.desc ? d.desc : `Dapatkan produk ${d.nama} berkualitas tinggi hanya di StudentPreneur SMKBA.`;
-        $('#modal-desc').text(finalDesc);
-
-        // Inisialisasi dan tampilkan Modal Bootstrap
-        const myModal = new bootstrap.Modal(document.getElementById('productModal'));
-        myModal.show();
+    // OPSIONAL: Jika ingin membuat list gambar kecil di bawah gambar utama modal
+    let galleryHTML = '';
+    listFoto.forEach(imgUrl => {
+        galleryHTML += `<img src="${imgUrl}" class="img-thumbnail me-1" style="width:60px; cursor:pointer;" onclick="$('#modal-img').attr('src', '${imgUrl}')">`;
     });
+    
+    // Pastikan di HTML modal ada <div id="modal-gallery"></div>
+    $('#modal-gallery').html(galleryHTML); 
+    
+    // ... sisa logika modal ...
+});
 
     /**
      * @event FilterCategory
